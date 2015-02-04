@@ -1,0 +1,26 @@
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'website/style3.css' %}" />
+
+
+<h1>{{ video.title }}</h1>
+<p>{{ video.pub_date }}</p>
+{% block contents %}
+<video name='demo' controls width='50%' height='40%'>
+<source src= "video.instance.video" type="video/mp4"></source>
+</video>
+{% endblock %}
+<p>{{ video.caption }} </p>
+<h3>Comments</h3>
+{% for comment in video.comments %}
+  <h3>{{ comment.author.name }} <small>on {{ comment.pub_date }}</small></h3>
+  {{ comment.comment_text }}
+{% endfor %}
+
+<form action="{% url 'website:post_comment' video.id %}" method="get">
+{% csrf_token %}
+    Name: <input type="text" name="name"/>
+    Email:  <input type="text" name="email"/>
+    Comment text: <input type="text" name="comment"/>
+<input type="submit" value="Post Comment" />
+</form>

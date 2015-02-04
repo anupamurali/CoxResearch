@@ -1,0 +1,17 @@
+<h1>{{ post.title }}</h1>
+<p>{{ post.pub_date }}</p>
+<p>{{ post.post_text }}<p>
+<h2>Comments</h2>
+{% for comment in post.comments %}
+  <h3>{{ comment.author.name }} <small>on {{ comment.created_on }}</small></h3>
+  {{ comment.comment_text }}
+{% endfor %}
+
+<form action="{% url 'polls:post_comment' post.id %}" method="get">
+{% csrf_token %}
+    Name: <input type="text" name="name"/>
+    Email:  <input type="text" name="email"/>
+    Comment text: <input type="text" name="comment"/>
+    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br />
+<input type="submit" value="Post Comment" />
+</form>

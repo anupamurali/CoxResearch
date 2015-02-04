@@ -1,0 +1,38 @@
+
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'website/style.css' %}" />
+
+<head>
+<h1> TestYourBrain </h1>
+
+<style>
+
+ul {
+    margin: 0;
+    padding: 0;
+
+}
+
+li {
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+    font-weight: normal;
+    font-size: 20px;
+    display: inline;
+    color: green;
+}
+</style>
+<ul>
+<li><a href={% url 'website:video_recording'%}>{{ "Create Account" }}</a></li>
+<li><a href={% url 'website:video_recording'%}>{{ "Log in" }}</a></li>
+</ul>
+</head>
+<body>
+
+<ul>
+  <li><a href={% url 'website:video_list'%}>{{ "View Videos" }}</a></li>
+  <li><a href={% url 'website:video_recording'%}>{{ "Record Video" }}</a></li>
+</ul>
+
+<p> Hello! Welcome to TestYourBrain. </p>
+</body>

@@ -1,0 +1,14 @@
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'website/style4.css' %}" />
+
+<h1>All Videos</h1>
+{% for video in video_list %}
+  <h2><a href={% url "website:video_detail" video.id %}>{{ video.title }}</a></h2>
+  <p>
+    {{ video.pub_date }} |
+    {{ video.comments|length }} comments |
+    tagged {{ video.tags|join:', ' }}
+  </p>
+{% endfor %}
+

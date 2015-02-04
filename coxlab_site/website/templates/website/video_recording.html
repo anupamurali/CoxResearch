@@ -1,0 +1,117 @@
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'website/style3.css' %}" />
+
+<style>
+#container {
+    margin: 0px auto;
+    width: 500px;
+    height: 375px;
+    border: 10px #333 solid;
+}
+#videoElement {
+    width: 500px;
+    height: 375px;
+    background-color: #666;
+}
+
+<a href="#" class="myButton">light red</a>
+
+.myButton {
+    -moz-box-shadow:inset 0px 39px 0px -24px #e67a73;
+    -webkit-box-shadow:inset 0px 39px 0px -24px #e67a73;
+    box-shadow:inset 0px 39px 0px -24px #e67a73;
+    color:#e4685d;
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
+    border-radius:4px;
+    border:1px solid #ffffff;
+    display:inline-block;
+    cursor:pointer;
+    font-family:arial;
+    font-size:15px;
+    padding:6px 15px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #b23e35;
+}
+.myButton:hover {
+    background-color:#eb675e;
+}
+.myButton:active {
+    position:relative;
+    top:1px;
+}
+
+
+
+</style>
+
+<h1>{{ "Record a Video!"}}</h1>
+<body>
+<div id="container">
+    <video autoplay="true" id="videoElement">
+	<script> 
+     var video = document.querySelector("#videoElement");
+     navigator.getUserMedia = navigator.getUserMedia || 
+                         navigator.webkitGetUserMedia || 
+                         navigator.mozGetUserMedia || 
+                         navigator.msGetUserMedia || 
+                         navigator.oGetUserMedia;
+
+    var streamRecorder;
+    var webcamstream;
+
+    if (navigator.getUserMedia) {
+        navigator.getUserMedia({audio: true, video: true}, function(stream) {
+            video.src = window.URL.createObjectURL(stream);
+            webcamstream = stream;
+        }, handleVideo, videoError);
+    }  
+    else {
+        video.src = 'somevideo.webm'; // fallback.
+    }
+
+    function handleVideo(stream) {
+        video.src = window.URL.createObjectURL(stream);
+    }
+ 
+    function videoError(e) {
+        // do something
+    }
+
+    function stopRecording() {
+        streamRecorder.getRecordedData(postVideoToServer);
+    }
+
+    function startRecording() {
+        streamRecorder = webcamstream.record();
+        setTimeout(stopRecording, 10000);
+    }
+
+    function postVideoToServer(videoblob) {
+
+        var data = {};
+        data.video = videoblob;
+        data.metadata = 'test metadata';
+        data.action = "upload_video";
+        jQuery.post("http://www.kongraju.in/uploadvideo.php", data, onUploadSuccess);
+    }
+
+    function onUploadSuccess() {
+        alert ('video uploaded');
+    }
+    </script>
+    </video>
+<table>
+<tr>
+<td> <myButton class="myButton" onclick="startRecording();">Record</button></td>
+<td><myButton class="myButton" onclick="stopRecording();">Stop</button></td>
+</tr>
+</table>
+</div>
+
+
+
+
+</body>
+</html>

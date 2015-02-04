@@ -1,0 +1,143 @@
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'website/style.css' %}" />
+
+<style>
+#container {
+    margin: 0px auto;
+    width: 500px;
+    height: 375px;
+    border: 10px #333 solid;
+}
+#videoElement {
+    width: 475px;
+    height: 305px;
+    background-color: #666;
+}
+</style>
+
+<h1>{{ "Record a Video!"}}</h1>
+<body>
+
+<div id="container">
+    <input type="file" accept="video/*;capture=camcorder">
+    <input type="file" accept="audio/*;capture=microphone"> 
+    <video autoplay="true" id="videoElement">
+   </video>
+
+      <script>
+navigator.getUserMedia  = navigator.getUserMedia ||
+                          navigator.webkitGetUserMedia ||
+                          navigator.mozGetUserMedia ||
+                          navigator.msGetUserMedia;
+
+var video = document.querySelector('video');
+var streamRecorder;
+var webcamstream;
+
+if (navigator.getUserMedia) {
+    navigator.getUserMedia({audio: true, video: true}, function(stream) {
+    video.src = window.URL.createObjectURL(stream);
+    webcamstream = stream;
+
+  }, handleVideo, videoError);
+}  
+else {
+  video.src = 'somevideo.webm'; // fallback.
+}
+
+    function handleVideo(stream) {
+        video.src = window.URL.createObjectURL(stream);
+    }
+ 
+    function videoError(e) {
+        // do something
+    }
+
+function startRecording() {
+        streamRecorder = webcamstream.record();
+        setTimeout(stopRecording, 10000);
+    }
+    function stopRecording() {
+        streamRecorder.getRecordedData(postVideoToServer);
+    }
+    function postVideoToServer(videoblob) {
+
+        var data = {};
+        data.video = videoblob;
+        data.metadata = 'test metadata';
+        data.action = "upload_video";
+        jQuery.post("http://www.kongraju.in/uploadvideo.php", data, onUploadSuccess);
+    }
+    function onUploadSuccess() {
+        alert ('video uploaded');
+    }
+
+
+var hdConstraints = {
+  video: {
+    mandatory: {
+      minWidth: 1280,
+      minHeight: 720
+    }
+  }
+};
+
+navigator.getUserMedia(hdConstraints, successCallback, errorCallback);
+
+
+var vgaConstraints = {
+  video: {
+    mandatory: {
+      maxWidth: 640,
+      maxHeight: 360
+    }
+  }
+};
+
+navigator.getUserMedia(vgaConstraints, successCallback, errorCallback);
+
+MediaStreamTrack.getSources(function(sourceInfos) {
+  var audioSource = null;
+  var videoSource = null;
+
+  for (var i = 0; i != sourceInfos.length; ++i) {
+    var sourceInfo = sourceInfos[i];
+    if (sourceInfo.kind === 'audio') {
+      console.log(sourceInfo.id, sourceInfo.label || 'microphone');
+
+      audioSource = sourceInfo.id;
+    } else if (sourceInfo.kind === 'video') {
+      console.log(sourceInfo.id, sourceInfo.label || 'camera');
+
+      videoSource = sourceInfo.id;
+    } else {
+      console.log('Some other kind of source: ', sourceInfo);
+    }
+  }
+
+  sourceSelected(audioSource, videoSource);
+});
+
+function sourceSelected(audioSource, videoSource) {
+  var constraints = {
+    audio: {
+      optional: [{sourceId: audioSource}]
+    },
+    video: {
+      optional: [{sourceId: videoSource}]
+    }
+  };
+
+  navigator.getUserMedia(constraints, successCallback, errorCallback);
+}
+      </script>
+       <div id="webcamcontrols">
+        <button class="recordbutton" onclick="startRecording();">RECORD</button>
+    </div>
+
+    <div id="webcamcontrols">
+        <button class="stopbutton" onclick="stopRecording();">STOP</button>
+    </div>
+</div>
+
